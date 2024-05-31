@@ -4,6 +4,8 @@
   "description": "API de usuários",
   "main": "server.js",
   "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "test": "npm test"
   },
   "repository": {
@@ -24,8 +26,10 @@
   },
   "homepage": "https://github.com/UelioNobre/api-auth-usuarios#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
+    "helmet": "^7.1.0",
     "nodemon": "^3.1.2"
   }
 }
