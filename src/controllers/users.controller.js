@@ -1,4 +1,7 @@
-const UserModel = require("../models/user.model")
+const bcrypt = require('bcryptjs');
+const UserModel = require("../models/user.model");
+const { hashPassword } = require('../utils/encrypt');
+const { showErrorMessage } = require('../utils/mongoose.format.errors');
 
 async function List(req, res) {
   try {
@@ -10,14 +13,32 @@ async function List(req, res) {
 }
 
 async function Create(req, res) {
-  const { name, email } = req.body;
+  const {
+    name: userName,
+    email: userEmail,
+    password: userPass } = req.body;
+
+  const name = new String(userName).trim();
+  const email = new String(userEmail).trim();
+  const password = new String(userPass).trim();
+
+  const encryptPassword = await hashPassword(password);
 
   try {
-    const user = new UserModel({ name, email });
+    const user = new UserModel({ name, email, password: encryptPassword });
     await user.save();
     return res.status(201).json({ user });
-  } catch ({ message }) {
-    return res.json({ message });
+  } catch (error) {
+    console.log('Erro', error)
+    if (error.errors) {
+      return res
+        .status(400)
+        .json({
+          message: showErrorMessage(error)
+        });
+    }
+
+    return res.json({ message: error.message });
   }
 }
 
