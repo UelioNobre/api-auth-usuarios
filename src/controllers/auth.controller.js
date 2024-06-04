@@ -6,14 +6,18 @@ const msgUserNotFound = { message: 'Usuário não encontrado' };
 
 async function signin(req, res) {
   const { body } = req;
-  const user = UserModel.where({ email: body.email.trim() });
-  const result = await user.findOne() || false;
+  const user = UserModel
+    .where({ email: body.email.trim(), isActive: true });
+
+  const result = await user.findOne();
 
   if (!result) {
     return res
       .status(404)
       .json(msgUserNotFound);
   }
+
+  console.log(result);
 
   const isValid = await verifyPassword(body.password.trim(), result.password);
 
@@ -23,8 +27,8 @@ async function signin(req, res) {
       .json(msgUserNotFound);
   }
 
-  const { _id, name, email } = result;
-  const token = generateToken({ _id, name, email });
+  const { _id, name, email, isActive } = result;
+  const token = generateToken({ _id, name, email, isActive });
 
   return res.json({ message: token });
 }
