@@ -19,6 +19,16 @@ async function Create(req, res) {
     .json({ post })
 }
 
+async function Read(req, res) {
+  const { postID } = req.params;
+  const { token } = req;
+
+  const postFilter = { _id: postID, user: token.data._id };
+  const post = await PostModel.findOne(postFilter);
+
+  return res.json({ post })
+}
+
 async function Update(req, res) {
   const { postID } = req.params;
   const { body } = req;
@@ -46,5 +56,6 @@ async function Update(req, res) {
 module.exports = {
   Home,
   Create,
-  Update
+  Read,
+  Update,
 }
