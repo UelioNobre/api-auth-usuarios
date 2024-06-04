@@ -11,8 +11,6 @@ const cors = require('cors');
 const routes = require('./routes');
 const app = express();
 const errorHandler = require('./middlewares/error.middleware');
-const connectDatabase = require('./db');
-
 
 app.use(cors());
 app.use(helmet());
