@@ -19,10 +19,16 @@ router.get(
 
 router.put(
   '/',
+  userMiddleware.userExists,
   userMiddleware.userNotChangePassword,
   userController.Update
 );
 
-router.delete('/:id', userController.Delete);
+router.delete(
+  '/',
+  userMiddleware.userExists,
+  userMiddleware.userIsActive,
+  userController.Delete
+);
 
 module.exports = router;
