@@ -25,7 +25,7 @@ async function Update(req, res) {
 
   try {
     const encryptPass = await hashPassword(password);
-    const updateUser = await UserModel.updateOne(
+    await UserModel.updateOne(
       { _id: data._id },
       { name, password: encryptPass },
     );
