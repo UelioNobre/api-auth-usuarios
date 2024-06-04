@@ -23,4 +23,10 @@ router.put(
   postsController.Update
 );
 
+router.delete(
+  '/:postID',
+  postsMiddleware.checkPostOwnership,
+  postsController.Delete
+);
+
 module.exports = router;

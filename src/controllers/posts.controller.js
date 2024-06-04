@@ -53,9 +53,17 @@ async function Update(req, res) {
 
 }
 
+async function Delete(req, res) {
+  const { postID } = req.params;
+  await PostModel.deleteOne({ _id: postID });
+  return res.status(204).json({ message: 'Deletado com sucesso!' });
+
+}
+
 module.exports = {
   Home,
   Create,
   Read,
   Update,
+  Delete
 }
