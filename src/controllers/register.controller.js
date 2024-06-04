@@ -1,5 +1,6 @@
 const UserModel = require("../models/user.model");
 const { hashPassword } = require("../utils/encrypt");
+const { showErrorMessage } = require("../utils/mongoose.format.errors");
 
 async function Register(req, res) {
   const { name, email, password } = req.body;
