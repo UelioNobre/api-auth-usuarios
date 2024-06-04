@@ -1,10 +1,15 @@
 const PostModel = require("../models/post.model");
 
-async function Home(req, res) {
+async function Home(req, res, next) {
   const token = req.token;
   const posts = await PostModel
     .find({ user: token.data._id })
     .select('title description _id');
+
+  if (posts.length === 0) {
+    return next(new Error('Nenhum post encontrado', { cause: { statusCode: 404 } }));
+  }
+
   return res.json({ posts });
 }
 
