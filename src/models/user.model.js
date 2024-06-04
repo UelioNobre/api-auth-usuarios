@@ -19,6 +19,11 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, 'O campo senha é obrigatório.'],
     maxlength: [128, 'O campo senha deve ter no máximo 128 caracteres.']
+  },
+  isActive: {
+    type: Boolean,
+    required: true,
+    default: true
   }
 });
 

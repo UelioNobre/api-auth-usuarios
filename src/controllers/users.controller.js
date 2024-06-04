@@ -3,64 +3,31 @@ const UserModel = require("../models/user.model");
 const { hashPassword } = require('../utils/encrypt');
 const { showErrorMessage } = require('../utils/mongoose.format.errors');
 
-async function List(req, res) {
+async function Read(req, res) {
+  const { data } = req.token;
+
   try {
-    const users = await UserModel.find();
-    return res.json({ users });
+    const user = await UserModel.findById(data._id).select('_id name email');
+    return res.json({ user });
   } catch ({ message }) {
     return res.json({ message });
   }
 }
 
 async function Create(req, res) {
-  const {
-    name: userName,
-    email: userEmail,
-    password: userPass } = req.body;
-
-  const name = new String(userName).trim();
-  const email = new String(userEmail).trim();
-  const password = new String(userPass).trim();
-
-  const encryptPassword = await hashPassword(password);
-
-  try {
-    const user = new UserModel({ name, email, password: encryptPassword });
-    await user.save();
-    return res.status(201).json({ user });
-  } catch (error) {
-    console.log('Erro', error)
-    if (error.errors) {
-      return res
-        .status(400)
-        .json({
-          message: showErrorMessage(error)
-        });
-    }
-
-    return res.json({ message: error.message });
-  }
+  return res.status(403).json({ message: 'Operação não permitida' });
 }
 
-async function Read(req, res) {
-  const { id } = req.params;
-
-  try {
-    const user = await UserModel.findById(id);
-    return res.json({ user });
-  } catch (error) {
-    return res.json({ message });
-  }
-}
 
 async function Update(req, res) {
-  const { id } = req.params;
-  const { name, email } = req.body;
+  const { data } = req.token;
+  const { name, password } = req.body;
 
   try {
+    const encryptPass = await hashPassword(password);
     await UserModel.updateOne(
-      { _id: id },
-      { name, email },
+      { _id: data._id },
+      { name, password: encryptPass },
     );
 
     return res.status(200).json({ message: 'Dados atualizados com sucesso!' });
@@ -71,27 +38,18 @@ async function Update(req, res) {
 }
 
 async function Delete(req, res) {
-  const { id } = req.params;
+  const { data } = req.token;
 
-  try {
-    const { deletedCount } = await UserModel.deleteOne(
-      { _id: id }
-    );
+  const userFilter = { _id: data._id };
+  const userData = { isActive: false };
 
-    if (deletedCount === 1) {
-      return res.status(204).json({ message: 'Usuário removido com sucesso!' });
-    }
+  await UserModel.updateOne(userFilter, userData);
 
-    return res.status(404).json({ message: 'Usuário não encontrado' });
+  return res.status(200).json({ message: `O usuário ${data.email} foi desativado` });
 
-  } catch (error) {
-    console.log(error)
-    return res.json({ message: 'Não foi possível remover o  usuário' });
-  }
 }
 
 module.exports = {
-  List,
   Create,
   Read,
   Update,
