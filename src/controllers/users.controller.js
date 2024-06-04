@@ -15,7 +15,7 @@ async function Read(req, res) {
 }
 
 async function Create(req, res) {
-  return res.status(403).json({ message: 'Operação não' });
+  return res.status(403).json({ message: 'Operação não permitida' });
 }
 
 
@@ -38,23 +38,15 @@ async function Update(req, res) {
 }
 
 async function Delete(req, res) {
-  const { id } = req.params;
+  const { data } = req.token;
 
-  try {
-    const { deletedCount } = await UserModel.deleteOne(
-      { _id: id }
-    );
+  const userFilter = { _id: data._id };
+  const userData = { isActive: false };
 
-    if (deletedCount === 1) {
-      return res.status(204).json({ message: 'Usuário removido com sucesso!' });
-    }
+  await UserModel.updateOne(userFilter, userData);
 
-    return res.status(404).json({ message: 'Usuário não encontrado' });
+  return res.status(200).json({ message: `O usuário ${data.email} foi desativado` });
 
-  } catch (error) {
-    console.log(error)
-    return res.json({ message: 'Não foi possível remover o  usuário' });
-  }
 }
 
 module.exports = {
