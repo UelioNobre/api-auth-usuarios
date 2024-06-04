@@ -5,7 +5,11 @@ const postsController = require('../controllers/posts.controller');
 const router = Router();
 
 router.get('/', postsController.Home);
-router.post('/', postsController.Create);
+
+router.post(
+  '/',
+  postsController.Create
+);
 
 router.get(
   '/:postID',
