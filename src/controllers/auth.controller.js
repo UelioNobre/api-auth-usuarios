@@ -17,8 +17,6 @@ async function signin(req, res) {
       .json(msgUserNotFound);
   }
 
-  console.log(result);
-
   const isValid = await verifyPassword(body.password.trim(), result.password);
 
   if (!isValid) {
@@ -27,10 +25,10 @@ async function signin(req, res) {
       .json(msgUserNotFound);
   }
 
-  const { _id, name, email, isActive } = result;
-  const token = generateToken({ _id, name, email, isActive });
+  const { _id, name, email } = result;
+  const token = generateToken({ _id, name, email });
 
-  return res.json({ message: token });
+  return res.json({ user: { _id, name, email, token } });
 }
 
 module.exports = {
